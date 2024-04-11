@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            background-color: #f2f2f2;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        #game-container {
+            margin: 50px auto;
+            width: 300px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="text"] {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 5px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <p>The word is: <span id="word-placeholder"></span></p>
+        <p>Remaining guess: <span id="remaining-guess">5</span></p>
+        <input type="text" id="guess-input" placeholder="Enter a letter">
+        <button id="guess-button">Guess</button>
+        <button id="restart-button">Play Again</button>
+      </div>
+    </div>
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const wordList = ["hoa", "hue", "trang", "tan", "hoang"];
+            let word = '';
+            let remainingGuess = 5;
+            let guessedLetters = [];
+
+            const wordPlaceholder = document.getElementById('word-placeholder');
+            const remainingGuessElement = document.getElementById('remaining-guess');
+            const guessInput = document.getElementById('guess-input');
+            const guessButton = document.getElementById('guess-button');
+            const restartButton = document.getElementById('restart-button');
+
+            function resetGame() {
+                word = getRandomWord();
+                remainingGuess = 5;
+                guessedLetters = [];
+                updateUI();
+            }
+
+            function getRandomWord() {
+                const randomIndex = Math.floor(Math.random() * wordList.length);
+                return wordList[randomIndex];
+            }
+
+            function updateUI() {
+                wordPlaceholder.textContent = getFormattedWord();
+                remainingGuessElement.textContent = remainingGuess;
+                guessInput.value = '';
+                guessInput.disabled = remainingGuess === 0;
+                guessButton.disabled = remainingGuess === 0;
+                restartButton.style.display = remainingGuess === 0 ? 'block' : 'none';
+            }
+
+            function getFormattedWord() {
+                let formatted = '';
+                for (const letter of word) {
+                if (guessedLetters.includes(letter)) {
+                    formatted += letter;
+                } else {
+                    formatted += '*';
+                }
+                }
+                return formatted;
+            }
+
+            function handleGuess() {
+                const guess = guessInput.value.toLowerCase();
+                if (!guessedLetters.includes(guess)) {
+                guessedLetters.push(guess);
+                if (!word.includes(guess)) {
+                    remainingGuess--;
+                }
+                if (getFormattedWord() === word) {
+                    alert('Congratulations! You guessed the word correctly!');
+                    resetGame();
+                } else if (remainingGuess === 0) {
+                    alert(`Game Over! The word was "${word}".`);
+                    resetGame();
+                }
+                updateUI();
+                }
+            }
+
+            guessButton.addEventListener('click', handleGuess);
+            restartButton.addEventListener('click', resetGame);
+
+            resetGame();
+        });  
+    </script>
+</body>
+</html>
